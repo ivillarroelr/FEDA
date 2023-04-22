@@ -4,10 +4,10 @@
 #include <random>
 
 /**
- * Generates a file with random numbers unsorted
+ * Generates files with random numbers unsorted
  * input <unsigned int> amountOfRandomNumbers: amount of numbers to be present in the file
  * input <unsigned int> distributionMax: upper limit for uniform integer distribution
- * input <std::string> fileName: name of the output file
+ * input <unsigned int> totalAmountOfFiles: Quantity of files to be generated
  * output void
  */
 void generateInputFilesForSortingAlgorithm(unsigned int amountOfRandomNumbers, unsigned int distributionMax, unsigned int totalAmountOfFiles){
