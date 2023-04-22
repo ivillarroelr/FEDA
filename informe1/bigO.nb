@@ -1,0 +1,24 @@
+O1[n_] := 1
+Ologn[n_] := Log[n]
+OdeN[n_] := n
+Onlogn[n_] := n Log[n]
+On2[n_] := n^2
+On3[n_] := n^3
+O2n[n_] := 2^n
+Onfact[n_] := Factorial[n]
+data1 = Quiet@Table[{n, O1[n]}, {n, 1, 10}];
+data2 = Quiet@Table[{n, Ologn[n]}, {n, 1, 10}];
+data3 = Quiet@Table[{n, OdeN[n]}, {n, 1, 10}];
+data4 = Quiet@Table[{n, Onlogn[n]}, {n, 1, 10}];
+data5 = Quiet@Table[{n, On2[n]}, {n, 1, 10}];
+data6 = Quiet@Table[{n, On3[n]}, {n, 1, 10}];
+data7 = Quiet@Table[{n, O2n[n]}, {n, 1, 10}];
+data8 = Quiet@Table[{n, Onfact[n]}, {n, 1, 10}];
+ListLinePlot[{data1, data2, data3, data4, data5, data6, data7, data8}, 
+ Frame -> True, FrameLabel -> {"Tamaño de entrada (n)", "Tiempo (T(n))"},
+ PlotLabel -> "Funciones comunes de Big O",
+ PlotStyle -> {Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007],Thickness[0.007]}, 
+ PlotLegends -> {"O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n^2)","O(n^3)", "O(2^n)", "O(n!)"}, 
+ GridLines -> Automatic, GridLinesStyle -> LightGray, 
+ Background -> LightGray, ImageSize -> Medium, 
+ BaseStyle -> {FontFamily -> "Roboto", FontSize -> 16}]
