@@ -27,5 +27,5 @@ ListLinePlot[{data1, data2, data3, data4, data5, data6, data7, data8},
  PlotStyle -> {Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007], Thickness[0.007],Thickness[0.007]}, 
  PlotLegends -> {"O(1)", "O(log n)", "O(n)", "O(n log n)", "O(n^2)","O(n^3)", "O(2^n)", "O(n!)"}, 
  GridLines -> Automatic, GridLinesStyle -> LightGray, 
- Background -> LightGray, ImageSize -> Medium, 
+ Background -> White, ImageSize -> Large, 
  BaseStyle -> {FontFamily -> "Roboto", FontSize -> 16}]
