@@ -10,27 +10,102 @@
 #include "../headers/SortingUtilities.h"
 
 std::vector<int> arrayOfNumbers;
+std::vector<int> arrayOfNumbersBkp;
+SortingAlgorithms sort;
+SortingUtilities utils;
+enum SortingExperiments { bubblesort, mergesort, quicksort, stlsort };
+const std::string EXPERIMENT_OUTPUT = "statistics/results.csv";
+
+void performExperiment(SortingExperiments experiment,
+                       std::vector<int>& array,
+                       std::ofstream& outputFile,
+                       std::filesystem::path inputFilePath) {
+  switch (experiment) {
+  case bubblesort: {
+    auto start = std::chrono::high_resolution_clock::now();
+    sort.bubbleSort(arrayOfNumbers);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+            .count();
+
+    utils.writeVectorToOutputFile(arrayOfNumbers,
+                                  "output_bubblesort_for_" +
+                                      inputFilePath.filename().string(),
+                                  "output_files");
+    // escribe en el archivo de estadisticas el tiempo de ejecucion
+    outputFile << "bubblesort" << "," << inputFilePath.filename().string()
+               .substr(0, inputFilePath.filename().string().length()) << ","
+               << duration << std::endl;
+    break;
+  }
+  case mergesort: {
+    auto start = std::chrono::high_resolution_clock::now();
+    sort.mergeSort(arrayOfNumbers,0,arrayOfNumbers.size()-1);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+            .count();
+
+    utils.writeVectorToOutputFile(arrayOfNumbers,
+                                  "output_mergesort_for_" +
+                                      inputFilePath.filename().string(),
+                                  "output_files");
+    // escribe en el archivo de estadisticas el tiempo de ejecucion
+    outputFile << "mergesort" << "," << inputFilePath.filename().string()
+               .substr(0, inputFilePath.filename().string().length()) << ","
+               << duration << std::endl;
+    break;
+  }
+  case quicksort: {
+    auto start = std::chrono::high_resolution_clock::now();
+    sort.quickSort(arrayOfNumbers,0,arrayOfNumbers.size()-1);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+            .count();
+
+    utils.writeVectorToOutputFile(arrayOfNumbers,
+                                  "output_quicksort_for_" +
+                                      inputFilePath.filename().string(),
+                                  "output_files");
+    // escribe en el archivo de estadisticas el tiempo de ejecucion
+    outputFile << "quicksort" << "," << inputFilePath.filename().string()
+               .substr(0, inputFilePath.filename().string().length()) << ","
+               << duration << std::endl;
+    break;
+  }
+  case stlsort: {
+    std::cout << "not implemented yet" << std::endl;
+    break;
+  }
+  default: {
+    std::cout << "not implemented yet" << std::endl;
+    break;
+  }
+  }
+  arrayOfNumbers = arrayOfNumbersBkp;
+}
 
 int main(int argc, char *argv[]) {
-  
-  SortingAlgorithms sort;
-  SortingUtilities utils;
   unsigned int amountOfRandomNumbers = atoi(argv[1]);
   unsigned int distributionMax = atoi(argv[2]);
   unsigned int totalAmountOfFiles = atoi(argv[3]);
-  std::ofstream outputFile("statistics/sorting_results.csv");
+  std::ofstream outputFile(EXPERIMENT_OUTPUT);
   outputFile << "Experiment,Dataset,Time(us)" << std::endl;
-  
+
   /*
    * generates input files from arguments
-   * increasing complexity depends on input from command line: amountOfRandomNumbers, distributionMax
-   * TODO: add functionality for different characteristics (semi-sorted, partially-sorted)
+   * increasing complexity depends on input from command line:
+   * amountOfRandomNumbers, distributionMax
+   * TODO: add functionality for different characteristics (semi-sorted,
+   * partially-sorted)
    */
   utils.generateInputFilesForSortingAlgorithm(
       amountOfRandomNumbers, distributionMax, totalAmountOfFiles);
 
   /**
-   * Iterates over directory for the input files and then populates the array 
+   * Iterates over directory for the input files and then populates the array
    */
   std::filesystem::path input_dir_path =
       std::filesystem::current_path() / "input_files";
@@ -44,40 +119,22 @@ int main(int argc, char *argv[]) {
       if (file.is_open()) {
 
         std::string line;
-        
+
         while (std::getline(file, line)) {
           int number = std::stoi(line);
           arrayOfNumbers.push_back(number);
         }
-        
+        arrayOfNumbersBkp = arrayOfNumbers;
         file.close();
 
-        /**
-         * Executes the sorting algorithms saving the execution time
-         */
-        std::string experiment = "Bubblesort";
-        auto start = std::chrono::high_resolution_clock::now();
-        sort.bubbleSort(arrayOfNumbers);
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto duration =
-            std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
-                .count();
-
-        std::filesystem::path inputFilePathAux = inputFile.path();
-        utils.writeVectorToOutputFile(arrayOfNumbers,
-                                      "output_for_" +
-                                          inputFilePathAux.filename().string(),
-                                      "output_files");
-        // escribe en el archivo de estadisticas el tiempo de ejecucion
-        outputFile << experiment << "," << inputFilePathAux.filename() << "," << duration
-                   << std::endl;
+        performExperiment(bubblesort, arrayOfNumbers, outputFile, inputFile.path());
+        performExperiment(mergesort, arrayOfNumbers, outputFile, inputFile.path());
+        performExperiment(quicksort, arrayOfNumbers, outputFile, inputFile.path());
 
       } else {
         std::cerr << "Error al abrir el archivo: " << inputFile.path() << '\n';
       }
-
     }
-    arrayOfNumbers.clear();
   }
   return 0;
 }
