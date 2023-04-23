@@ -71,10 +71,13 @@ int main(int argc, char *argv[]) {
         // escribe en el archivo de estadisticas el tiempo de ejecucion
         outputFile << experiment << "," << inputFilePathAux.filename() << "," << duration
                    << std::endl;
+
       } else {
         std::cerr << "Error al abrir el archivo: " << inputFile.path() << '\n';
       }
+
     }
+    arrayOfNumbers.clear();
   }
   return 0;
 }

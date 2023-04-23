@@ -24,7 +24,8 @@ void SortingUtilities::generateInputFilesForSortingAlgorithm(
     std::mt19937 generator(randomDevice());
     std::uniform_int_distribution<> distribution(1, distributionMax);
     std::vector<int> array;
-    for (int i = 0; i < amountOfRandomNumbers; i++) {
+    float increasingLength = (amountOfRandomNumbers/totalAmountOfFiles)*quantity;
+    for (int i = 0; i < increasingLength; i++) {
       array.push_back(distribution(generator));
     }
     std::ofstream outputFile(fileName);
