@@ -1,0 +1,16 @@
+Experiment,Dataset,Time(us)
+bubblesort,input_1.txt,35
+mergesort,input_1.txt,31
+quicksort,input_1.txt,6
+bubblesort,input_4.txt,47
+mergesort,input_4.txt,54
+quicksort,input_4.txt,7
+bubblesort,input_2.txt,51
+mergesort,input_2.txt,32
+quicksort,input_2.txt,7
+bubblesort,input_5.txt,73
+mergesort,input_5.txt,41
+quicksort,input_5.txt,8
+bubblesort,input_3.txt,90
+mergesort,input_3.txt,42
+quicksort,input_3.txt,10
