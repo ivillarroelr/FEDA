@@ -38,7 +38,7 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << "," << duration << std::endl;
+               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case mergesort: {
@@ -58,7 +58,7 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << "," << duration << std::endl;
+               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case quicksort: {
@@ -78,7 +78,7 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << "," << duration << std::endl;
+               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case insertionsort: {
@@ -98,7 +98,7 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << "," << duration << std::endl;
+               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case stlsort: {
@@ -118,7 +118,7 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << "," << duration << std::endl;
+               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   default: {
@@ -131,7 +131,7 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
 
 int main(int argc, char *argv[]) {
   std::ofstream outputFile(EXPERIMENT_OUTPUT);
-  outputFile << "Experiment,Dataset,Time(us)" << std::endl;
+  outputFile << "Experiment,Dataset,Entries,Time(us)" << std::endl;
   if (argc > 1) {
     unsigned int amountOfRandomNumbers = atoi(argv[1]);
     unsigned int distributionMax = atoi(argv[2]);
