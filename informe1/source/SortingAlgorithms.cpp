@@ -33,6 +33,19 @@ void SortingAlgorithms::quickSort(std::vector<int>& array, int low, int high) {
   }
 }
 
+void SortingAlgorithms::insertionSort(std::vector<int>& array) {
+  int n = array.size();
+  for (int i = 1; i < n; i++) {
+    int key = array[i];
+    int j = i - 1;
+    while (j >= 0 && array[j] > key) {
+      array[j + 1] = array[j];
+      j--;
+    }
+    array[j + 1] = key;
+  }
+}
+
 void SortingAlgorithms::merge(std::vector<int>& array, int left, int middle, int right) {
   int n1 = middle - left + 1;
   int n2 = right - middle;
