@@ -30,7 +30,8 @@ enum SortingExperiments {
 
 enum MatrixExperiments { matrixproduct, matrixproductoptimized, strassen };
 
-const std::string EXPERIMENT_OUTPUT = "statistics/results.csv";
+const std::string SORTING_EXPERIMENT_OUTPUT = "statistics/sorting_results.csv";
+const std::string MATRIX_EXPERIMENT_OUTPUT = "statistics/matrix_results.csv";
 
 void performSortingExperiment(SortingExperiments experiment,
                               std::vector<int> &array,
@@ -160,21 +161,61 @@ void performMatrixExperiment(MatrixExperiments experiment,
             .count();
 
     mUtils.writeMatrixToOutputFile(resultMatrix,
-                                   "output_matrix_for_" + std::to_string(set),
+                                   "output_matrixproduct_for_" +
+                                       std::to_string(set) + ".txt",
                                    "output_files");
     // escribe en el archivo de estadisticas el tiempo de ejecucion
     outputFile << "matrixproduct"
                << "," << set << "," << m << "," << duration << std::endl;
     break;
   }
+  case matrixproductoptimized: {
+    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<int>> resultMatrix =
+        matrix.transpose_mm(matrixA, matrixB);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+            .count();
+
+    mUtils.writeMatrixToOutputFile(resultMatrix,
+                                   "output_matrixproductoptimized_for_" +
+                                       std::to_string(set) + ".txt",
+                                   "output_files");
+    // escribe en el archivo de estadisticas el tiempo de ejecucion
+    outputFile << "matrixproductoptimized"
+               << "," << set << "," << m << "," << duration << std::endl;
+    break;
+  }
+  case strassen: {
+    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<int>> resultMatrix =
+        matrix.strassen(matrixA, matrixB);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+            .count();
+
+    mUtils.writeMatrixToOutputFile(
+        resultMatrix, "output_strassen_for_" + std::to_string(set) + ".txt",
+        "output_files");
+    // escribe en el archivo de estadisticas el tiempo de ejecucion
+    outputFile << "strassen"
+               << "," << set << "," << m << "," << duration << std::endl;
+    break;
+  }
   default: {
+    std::cout << "not implemented yet" << std::endl;
+    break;
   }
   }
 }
 
 int main(int argc, char *argv[]) {
-  std::ofstream outputFile(EXPERIMENT_OUTPUT);
-  outputFile << "Experiment,Dataset,Entries,Time(us)" << std::endl;
+  std::ofstream sortingOutputFile(SORTING_EXPERIMENT_OUTPUT);
+  sortingOutputFile << "Experiment,Dataset,Entries,Time(us)" << std::endl;
+  std::ofstream matrixOutputFile(MATRIX_EXPERIMENT_OUTPUT);
+  matrixOutputFile << "Experiment,Dataset,m,Time(us)" << std::endl;
   if (argc > 1) {
     unsigned int amountOfRandomNumbers = atoi(argv[1]);
     unsigned int distributionMax = atoi(argv[2]);
@@ -220,9 +261,51 @@ int main(int argc, char *argv[]) {
       std::filesystem::recursive_directory_iterator(input_dir_path_matrix),
       std::filesystem::recursive_directory_iterator{});
 
-  for (int j = 1; j <= filecounterMatrix / 2; j++) {
-    std::string filenameA = "matrix_input_a" + std::to_string(j) + ".txt";
-    std::string filenameB = "matrix_input_b" + std::to_string(j) + ".txt";
+  for (int i = 1; i <= totalFilesSorting; i++) {
+    std::string filename = "input_" + std::to_string(i) + ".txt";
+    for (const auto &inputFile :
+         std::filesystem::directory_iterator(input_dir_path_sorting)) {
+      if ((inputFile.path().filename() == filename) &&
+          inputFile.is_regular_file()) {
+
+        int percentage = (filecounterSorting * 100) / totalFilesSorting;
+        std::cout << "\r"
+                  << "Sorting Working: " + std::to_string(percentage) + "%"
+                  << std::flush;
+
+        std::ifstream file(inputFile.path());
+        if (file.is_open()) {
+
+          std::string line;
+
+          while (std::getline(file, line)) {
+            int number = std::stoi(line);
+            arrayOfNumbers.push_back(number);
+          }
+          arrayOfNumbersBkp = arrayOfNumbers;
+          file.close();
+
+          performSortingExperiment(bubblesort, arrayOfNumbers,
+                                   sortingOutputFile, inputFile.path());
+          performSortingExperiment(insertionsort, arrayOfNumbers,
+                                   sortingOutputFile, inputFile.path());
+          performSortingExperiment(mergesort, arrayOfNumbers, sortingOutputFile,
+                                   inputFile.path());
+          performSortingExperiment(quicksort, arrayOfNumbers, sortingOutputFile,
+                                   inputFile.path());
+          performSortingExperiment(stlsort, arrayOfNumbers, sortingOutputFile,
+                                   inputFile.path());
+        } else {
+          std::cerr << "Error al abrir el archivo: " << inputFile.path()
+                    << '\n';
+        }
+      }
+    }
+    filecounterSorting++;
+  }
+  for (int j = 1; j <= totalFilesMatrix; j++) {
+    std::string filenameA = "matrix_input_a_" + std::to_string(j) + ".txt";
+    std::string filenameB = "matrix_input_b_" + std::to_string(j) + ".txt";
     std::vector<std::vector<int>> auxMatrixA;
     std::vector<std::vector<int>> auxMatrixB;
 
@@ -231,31 +314,31 @@ int main(int argc, char *argv[]) {
               << "Matrix Working: " + std::to_string(percentage) + "%"
               << std::flush;
 
-    for (const auto &inputFile :
-         std::filesystem::directory_iterator(input_dir_path_sorting)) {
-      if ((inputFile.path().filename() == filenameA) &&
-          inputFile.is_regular_file()) {
+    try {
+      for (const auto &inputFile :
+           std::filesystem::directory_iterator(input_dir_path_matrix)) {
+        if ((inputFile.path().filename() == filenameA) &&
+            inputFile.is_regular_file()) {
+          std::ifstream file(inputFile.path());
+          if (file.is_open()) {
 
-        std::ifstream file(inputFile.path());
-        if (file.is_open()) {
+            std::string line;
 
-          std::string line;
-
-          while (std::getline(file, line)) {
-            std::vector<int> aux;
-            std::stringstream ss(line);
-            int num;
-            while (ss >> num) {
-              aux.push_back(num);
+            while (std::getline(file, line)) {
+              std::vector<int> aux;
+              std::stringstream ss(line);
+              int num;
+              while (ss >> num) {
+                aux.push_back(num);
+              }
+              auxMatrixA.push_back(aux);
             }
-            auxMatrixA.push_back(aux);
+
+            file.close();
           }
-
-          file.close();
-            }
-        } else if ((inputFile.path().filename() == filenameB) &&
-                   inputFile.is_regular_file()) {
-
+        }
+        if ((inputFile.path().filename() == filenameB) &&
+            inputFile.is_regular_file()) {
           std::ifstream file(inputFile.path());
           if (file.is_open()) {
 
@@ -278,53 +361,20 @@ int main(int argc, char *argv[]) {
                       << '\n';
           }
         }
-      performMatrixExperiment(matrixproduct, outputFile, j,
-                              auxMatrixA[0].size(), auxMatrixA, auxMatrixB);
-      filecounterSorting++;
-    }
-  }
-    for (int i = 1; i <= totalFilesSorting; i++) {
-      std::string filename = "input_" + std::to_string(i) + ".txt";
-      for (const auto &inputFile :
-           std::filesystem::directory_iterator(input_dir_path_sorting)) {
-        if ((inputFile.path().filename() == filename) &&
-            inputFile.is_regular_file()) {
-
-          int percentage = (filecounterSorting * 100) / totalFilesSorting;
-          std::cout << "\r"
-                    << "Sorting Working: " + std::to_string(percentage) + "%"
-                    << std::flush;
-
-          std::ifstream file(inputFile.path());
-          if (file.is_open()) {
-
-            std::string line;
-
-            while (std::getline(file, line)) {
-              int number = std::stoi(line);
-              arrayOfNumbers.push_back(number);
-            }
-            arrayOfNumbersBkp = arrayOfNumbers;
-            file.close();
-
-            performSortingExperiment(bubblesort, arrayOfNumbers, outputFile,
-                                     inputFile.path());
-            performSortingExperiment(insertionsort, arrayOfNumbers, outputFile,
-                                     inputFile.path());
-            performSortingExperiment(mergesort, arrayOfNumbers, outputFile,
-                                     inputFile.path());
-            performSortingExperiment(quicksort, arrayOfNumbers, outputFile,
-                                     inputFile.path());
-            performSortingExperiment(stlsort, arrayOfNumbers, outputFile,
-                                     inputFile.path());
-          } else {
-            std::cerr << "Error al abrir el archivo: " << inputFile.path()
-                      << '\n';
-          }
-        }
       }
-      filecounterSorting++;
+    } catch (const std::exception &e) {
+      std::cout << "An exception occurred: " << e.what() << std::endl;
     }
-    std::cout << std::endl;
-    return 0;
+    if (auxMatrixA.size() > 0 && auxMatrixB.size() > 0) {
+      performMatrixExperiment(matrixproduct, matrixOutputFile, j,
+                              auxMatrixA[0].size(), auxMatrixA, auxMatrixB);
+      performMatrixExperiment(matrixproductoptimized, matrixOutputFile, j,
+                              auxMatrixA[0].size(), auxMatrixA, auxMatrixB);
+      performMatrixExperiment(strassen, matrixOutputFile, j,
+                              auxMatrixA[0].size(), auxMatrixA, auxMatrixB);
     }
+    filecounterMatrix++;
+  }
+  std::cout << std::endl;
+  return 0;
+}

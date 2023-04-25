@@ -30,4 +30,4 @@ def plot_results(csv_file):
 
     plt.show()
 
-plot_results('statistics/results.csv')
+plot_results('statistics/sorting_results.csv')

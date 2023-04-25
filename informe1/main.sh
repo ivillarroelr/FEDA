@@ -67,8 +67,28 @@ function fc_rerun {
   ./main
 }
 
-function fc_display {
-  python3 graph/graphUtility.py
+function fc_matrixdisplay {
+  python3 graph/graphMatrix.py
+}
+
+function fc_sortingdisplay {
+  python3 graph/graphSorting.py
+}
+
+function fc_help {
+  echo -e "\033[1mAvailable options\033[0m"
+  echo ""
+  echo -e "\033[1mclean\033[0m : Zip and Delete experiment files (input, output and results)"
+  echo ""
+  echo -e "\033[1mrerun\033[0m : Runs again the experiment with current input files, zipping and deleting output and result files"
+  echo ""
+  echo -e "\033[1mnewrun\033[0m : Runs new experiment, cleaning the environment and prompting for new parameters"
+  echo ""
+  echo -e "\033[1mrecompile\033[0m : Deletes current main program and recompiles it"
+  echo ""
+  echo -e "\033[1mmatrixdisplay\033[0m : Shows graphics for current matrix results"
+  echo ""
+  echo -e "\033[1msortingdisplay\033[0m : Shows graphics for current sorting results"
 }
 
 case $arg in
@@ -88,9 +108,16 @@ case $arg in
     echo "Recompiling"
     fc_recompile
     ;;
-   display)
-    echo "Displaying results"
-    fc_display
+   matrixdisplay)
+    echo "Displaying matrix results"
+    fc_matrixdisplay
+    ;;
+   sortingdisplay)
+    echo "Displaying matrix results"
+    fc_sortingdisplay
+    ;;
+   help)
+    fc_help
     ;;
   *)
     echo "Opción no reconocida"
