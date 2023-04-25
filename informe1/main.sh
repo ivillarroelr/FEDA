@@ -54,8 +54,21 @@ function fc_recompile {
 }
 
 function fc_rerun {
+  zip_file_output="output_files/output_$(date +"%Y%m%d%H%M%S").zip"
+  zip_file_results="statistics/results_$(date +"%Y%m%d%H%M%S").zip"
+  txt_files_output=$(find output_files/ -name "*.txt")
+  csv_files_results=$(find statistics/ -name "*.csv")
+  zip -q "$zip_file_output" $txt_files_output
+  zip -q "$zip_file_results" $csv_files_results
+  echo "Files zipped"
+  rm output_files/*.txt statistics/*.csv
+  echo "Experiment files cleaned"
   echo "Executing main program..."
   ./main
+}
+
+function fc_display {
+  python3 graph/graphUtility.py
 }
 
 case $arg in
@@ -74,6 +87,10 @@ case $arg in
    recompile)
     echo "Recompiling"
     fc_recompile
+    ;;
+   display)
+    echo "Displaying results"
+    fc_display
     ;;
   *)
     echo "Opción no reconocida"
