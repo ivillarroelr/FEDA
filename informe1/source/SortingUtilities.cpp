@@ -19,7 +19,7 @@ void SortingUtilities::generateInputFilesForSortingAlgorithm(
   for (int quantity = 1; quantity <= totalAmountOfFiles; quantity++) {
 
     std::string fileName =
-        "input_files/input_" + std::to_string(quantity) + ".txt";
+        "input_files/sorting/input_" + std::to_string(quantity) + ".txt";
     std::random_device randomDevice;
     std::mt19937 generator(randomDevice());
     std::uniform_int_distribution<> distribution(1, distributionMax);

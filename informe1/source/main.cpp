@@ -4,22 +4,38 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <sstream>
 #include <string>
 #include <vector>
 
+#include "../headers/MatrixAlgorithms.h"
+#include "../headers/MatrixUtilities.h"
 #include "../headers/SortingAlgorithms.h"
 #include "../headers/SortingUtilities.h"
 
 std::vector<int> arrayOfNumbers;
 std::vector<int> arrayOfNumbersBkp;
 SortingAlgorithms sort;
-SortingUtilities utils;
-enum SortingExperiments { bubblesort, mergesort, quicksort, insertionsort, stlsort };
+SortingUtilities sUtils;
+MatrixAlgorithms matrix;
+MatrixUtilities mUtils;
+
+enum SortingExperiments {
+  bubblesort,
+  mergesort,
+  quicksort,
+  insertionsort,
+  stlsort
+};
+
+enum MatrixExperiments { matrixproduct, matrixproductoptimized, strassen };
+
 const std::string EXPERIMENT_OUTPUT = "statistics/results.csv";
 
-void performExperiment(SortingExperiments experiment, std::vector<int> &array,
-                       std::ofstream &outputFile,
-                       std::filesystem::path inputFilePath) {
+void performSortingExperiment(SortingExperiments experiment,
+                              std::vector<int> &array,
+                              std::ofstream &outputFile,
+                              std::filesystem::path inputFilePath) {
   switch (experiment) {
   case bubblesort: {
     auto start = std::chrono::high_resolution_clock::now();
@@ -29,16 +45,16 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
             .count();
 
-    utils.writeVectorToOutputFile(arrayOfNumbers,
-                                  "output_bubblesort_for_" +
-                                      inputFilePath.filename().string(),
-                                  "output_files");
+    sUtils.writeVectorToOutputFile(arrayOfNumbers,
+                                   "output_bubblesort_for_" +
+                                       inputFilePath.filename().string(),
+                                   "output_files");
     // escribe en el archivo de estadisticas el tiempo de ejecucion
     outputFile << "bubblesort"
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
+               << "," << arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case mergesort: {
@@ -49,16 +65,16 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
             .count();
 
-    utils.writeVectorToOutputFile(arrayOfNumbers,
-                                  "output_mergesort_for_" +
-                                      inputFilePath.filename().string(),
-                                  "output_files");
+    sUtils.writeVectorToOutputFile(arrayOfNumbers,
+                                   "output_mergesort_for_" +
+                                       inputFilePath.filename().string(),
+                                   "output_files");
     // escribe en el archivo de estadisticas el tiempo de ejecucion
     outputFile << "mergesort"
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
+               << "," << arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case quicksort: {
@@ -69,16 +85,16 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
             .count();
 
-    utils.writeVectorToOutputFile(arrayOfNumbers,
-                                  "output_quicksort_for_" +
-                                      inputFilePath.filename().string(),
-                                  "output_files");
+    sUtils.writeVectorToOutputFile(arrayOfNumbers,
+                                   "output_quicksort_for_" +
+                                       inputFilePath.filename().string(),
+                                   "output_files");
     // escribe en el archivo de estadisticas el tiempo de ejecucion
     outputFile << "quicksort"
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
+               << "," << arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case insertionsort: {
@@ -89,16 +105,16 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
             .count();
 
-    utils.writeVectorToOutputFile(arrayOfNumbers,
-                                  "output_insertionsort_for_" +
-                                      inputFilePath.filename().string(),
-                                  "output_files");
+    sUtils.writeVectorToOutputFile(arrayOfNumbers,
+                                   "output_insertionsort_for_" +
+                                       inputFilePath.filename().string(),
+                                   "output_files");
     // escribe en el archivo de estadisticas el tiempo de ejecucion
     outputFile << "insertionsort"
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
+               << "," << arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   case stlsort: {
@@ -109,16 +125,16 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
         std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
             .count();
 
-    utils.writeVectorToOutputFile(arrayOfNumbers,
-                                  "output_stlsort_for_" +
-                                      inputFilePath.filename().string(),
-                                  "output_files");
+    sUtils.writeVectorToOutputFile(arrayOfNumbers,
+                                   "output_stlsort_for_" +
+                                       inputFilePath.filename().string(),
+                                   "output_files");
     // escribe en el archivo de estadisticas el tiempo de ejecucion
     outputFile << "stlsort"
                << ","
                << inputFilePath.filename().string().substr(
                       0, inputFilePath.filename().string().length())
-               << ","<< arrayOfNumbers.size() << "," << duration << std::endl;
+               << "," << arrayOfNumbers.size() << "," << duration << std::endl;
     break;
   }
   default: {
@@ -129,6 +145,33 @@ void performExperiment(SortingExperiments experiment, std::vector<int> &array,
   arrayOfNumbers = arrayOfNumbersBkp;
 }
 
+void performMatrixExperiment(MatrixExperiments experiment,
+                             std::ofstream &outputFile, int set, int m,
+                             std::vector<std::vector<int>> matrixA,
+                             std::vector<std::vector<int>> matrixB) {
+  switch (experiment) {
+  case matrixproduct: {
+    auto start = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<int>> resultMatrix =
+        matrix.standard_mm(matrixA, matrixB);
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(stop - start)
+            .count();
+
+    mUtils.writeMatrixToOutputFile(resultMatrix,
+                                   "output_matrix_for_" + std::to_string(set),
+                                   "output_files");
+    // escribe en el archivo de estadisticas el tiempo de ejecucion
+    outputFile << "matrixproduct"
+               << "," << set << "," << m << "," << duration << std::endl;
+    break;
+  }
+  default: {
+  }
+  }
+}
+
 int main(int argc, char *argv[]) {
   std::ofstream outputFile(EXPERIMENT_OUTPUT);
   outputFile << "Experiment,Dataset,Entries,Time(us)" << std::endl;
@@ -136,38 +179,62 @@ int main(int argc, char *argv[]) {
     unsigned int amountOfRandomNumbers = atoi(argv[1]);
     unsigned int distributionMax = atoi(argv[2]);
     unsigned int totalAmountOfFiles = atoi(argv[3]);
-    /*
+    unsigned int matrixAMaxWidth = atoi(argv[4]);
+    unsigned int matrixAMaxHeight = atoi(argv[5]);
+    unsigned int matrixBMaxWidth = atoi(argv[6]);
+    unsigned int matrixBMaxHeight = atoi(argv[7]);
+    unsigned int matrixTotalSetOfFiles = atoi(argv[8]);
+    unsigned int matrixDistributionMax = atoi(argv[9]);
+
+    /* TODO: refactor comments
      * generates input files from arguments
      * increasing complexity depends on input from command line:
      * amountOfRandomNumbers, distributionMax
      * TODO: add functionality for different characteristics (semi-sorted,
      * partially-sorted)
      */
-    utils.generateInputFilesForSortingAlgorithm(
+    sUtils.generateInputFilesForSortingAlgorithm(
         amountOfRandomNumbers, distributionMax, totalAmountOfFiles);
+
+    mUtils.generateMatrixFilesForProductAlgorithms(
+        matrixAMaxWidth, matrixAMaxHeight, matrixBMaxWidth, matrixBMaxHeight,
+        matrixTotalSetOfFiles, matrixDistributionMax);
   }
+
   /**
    * Iterates over directory for the input files and then populates the array
    */
-  std::filesystem::path input_dir_path =
-      std::filesystem::current_path() / "input_files";
+  std::filesystem::path input_dir_path_sorting =
+      std::filesystem::current_path() / "input_files/sorting";
 
-  int filecounter = 1;
-  const auto totalFiles = std::distance(
-      std::filesystem::recursive_directory_iterator(input_dir_path),
+  std::filesystem::path input_dir_path_matrix =
+      std::filesystem::current_path() / "input_files/matrix";
+
+  int filecounterSorting = 1;
+  const auto totalFilesSorting = std::distance(
+      std::filesystem::recursive_directory_iterator(input_dir_path_sorting),
       std::filesystem::recursive_directory_iterator{});
 
-  for (int i = 1; i <= totalFiles; i++) {
-    std::string filename = "input_" + std::to_string(i) + ".txt";
-    for (const auto &inputFile :
-         std::filesystem::directory_iterator(input_dir_path)) {
-      if ((inputFile.path().filename() == filename) &&
-          inputFile.is_regular_file()) {
+  int filecounterMatrix = 1;
+  const auto totalFilesMatrix = std::distance(
+      std::filesystem::recursive_directory_iterator(input_dir_path_matrix),
+      std::filesystem::recursive_directory_iterator{});
 
-        int percentage = (filecounter * 100) / totalFiles;
-        std::cout << "\r"
-                  << "Working: " + std::to_string(percentage) + "%"
-                  << std::flush;
+  for (int j = 1; j <= filecounterMatrix / 2; j++) {
+    std::string filenameA = "matrix_input_a" + std::to_string(j) + ".txt";
+    std::string filenameB = "matrix_input_b" + std::to_string(j) + ".txt";
+    std::vector<std::vector<int>> auxMatrixA;
+    std::vector<std::vector<int>> auxMatrixB;
+
+    int percentage = (filecounterMatrix * 100) / totalFilesMatrix;
+    std::cout << "\r"
+              << "Matrix Working: " + std::to_string(percentage) + "%"
+              << std::flush;
+
+    for (const auto &inputFile :
+         std::filesystem::directory_iterator(input_dir_path_sorting)) {
+      if ((inputFile.path().filename() == filenameA) &&
+          inputFile.is_regular_file()) {
 
         std::ifstream file(inputFile.path());
         if (file.is_open()) {
@@ -175,30 +242,89 @@ int main(int argc, char *argv[]) {
           std::string line;
 
           while (std::getline(file, line)) {
-            int number = std::stoi(line);
-            arrayOfNumbers.push_back(number);
+            std::vector<int> aux;
+            std::stringstream ss(line);
+            int num;
+            while (ss >> num) {
+              aux.push_back(num);
+            }
+            auxMatrixA.push_back(aux);
           }
-          arrayOfNumbersBkp = arrayOfNumbers;
-          file.close();
 
-          performExperiment(bubblesort, arrayOfNumbers, outputFile,
-                            inputFile.path());
-          performExperiment(insertionsort, arrayOfNumbers, outputFile,
-                            inputFile.path());
-          performExperiment(mergesort, arrayOfNumbers, outputFile,
-                            inputFile.path());
-          performExperiment(quicksort, arrayOfNumbers, outputFile,
-                            inputFile.path());
-          performExperiment(stlsort, arrayOfNumbers, outputFile,
-                            inputFile.path());
-        } else {
-          std::cerr << "Error al abrir el archivo: " << inputFile.path()
-                    << '\n';
+          file.close();
+            }
+        } else if ((inputFile.path().filename() == filenameB) &&
+                   inputFile.is_regular_file()) {
+
+          std::ifstream file(inputFile.path());
+          if (file.is_open()) {
+
+            std::string line;
+
+            while (std::getline(file, line)) {
+              std::vector<int> aux;
+              std::stringstream ss(line);
+              int num;
+              while (ss >> num) {
+                aux.push_back(num);
+              }
+              auxMatrixB.push_back(aux);
+            }
+
+            file.close();
+
+          } else {
+            std::cerr << "Error al abrir el archivo: " << inputFile.path()
+                      << '\n';
+          }
+        }
+      performMatrixExperiment(matrixproduct, outputFile, j,
+                              auxMatrixA[0].size(), auxMatrixA, auxMatrixB);
+      filecounterSorting++;
+    }
+  }
+    for (int i = 1; i <= totalFilesSorting; i++) {
+      std::string filename = "input_" + std::to_string(i) + ".txt";
+      for (const auto &inputFile :
+           std::filesystem::directory_iterator(input_dir_path_sorting)) {
+        if ((inputFile.path().filename() == filename) &&
+            inputFile.is_regular_file()) {
+
+          int percentage = (filecounterSorting * 100) / totalFilesSorting;
+          std::cout << "\r"
+                    << "Sorting Working: " + std::to_string(percentage) + "%"
+                    << std::flush;
+
+          std::ifstream file(inputFile.path());
+          if (file.is_open()) {
+
+            std::string line;
+
+            while (std::getline(file, line)) {
+              int number = std::stoi(line);
+              arrayOfNumbers.push_back(number);
+            }
+            arrayOfNumbersBkp = arrayOfNumbers;
+            file.close();
+
+            performSortingExperiment(bubblesort, arrayOfNumbers, outputFile,
+                                     inputFile.path());
+            performSortingExperiment(insertionsort, arrayOfNumbers, outputFile,
+                                     inputFile.path());
+            performSortingExperiment(mergesort, arrayOfNumbers, outputFile,
+                                     inputFile.path());
+            performSortingExperiment(quicksort, arrayOfNumbers, outputFile,
+                                     inputFile.path());
+            performSortingExperiment(stlsort, arrayOfNumbers, outputFile,
+                                     inputFile.path());
+          } else {
+            std::cerr << "Error al abrir el archivo: " << inputFile.path()
+                      << '\n';
+          }
         }
       }
+      filecounterSorting++;
     }
-    filecounter++;
-  }
-  std::cout << std::endl;
-  return 0;
-}
+    std::cout << std::endl;
+    return 0;
+    }

@@ -8,15 +8,15 @@
 #include "../headers/MatrixUtilities.h"
 
 void MatrixUtilities::generateMatrixFilesForProductAlgorithms(
-    int matrixAMaxWitdh, int matrixAMaxHeigth, int matrixBMaxWitdh,
-    int matrixBMaxHeigth, int totalSetOfFiles, int distributionMax) {
-  for (int quantity = 1; quantity <= totalSetOfFiles+1; quantity++) {
-    std::string fileNameA =
-        "input_files/matrix_input_a_" + std::to_string(quantity) + ".txt";
-    std::string fileNameB =
-        "input_files/matrix_input_b_" + std::to_string(quantity) + ".txt";
-    int A[matrixAMaxWitdh][matrixAMaxHeigth];
-    int B[matrixBMaxWitdh][matrixBMaxHeigth];
+    int matrixAMaxWitdh, int matrixAMaxHeight, int matrixBMaxWitdh,
+    int matrixBMaxHeight, int totalSetOfFiles, int distributionMax) {
+  for (int quantity = 0; quantity < totalSetOfFiles; quantity++) {
+    std::string fileNameA = "input_files/matrix/matrix_input_a_" +
+                            std::to_string(quantity + 1) + ".txt";
+    std::string fileNameB = "input_files/matrix/matrix_input_b_" +
+                            std::to_string(quantity + 1) + ".txt";
+    int A[matrixAMaxWitdh][matrixAMaxHeight];
+    int B[matrixBMaxWitdh][matrixBMaxHeight];
     std::random_device randomDevice;
     std::mt19937 generator(randomDevice());
     std::uniform_int_distribution<> distribution(1, distributionMax);
@@ -24,11 +24,11 @@ void MatrixUtilities::generateMatrixFilesForProductAlgorithms(
     float increasingComplexityAW =
         (matrixAMaxWitdh / totalSetOfFiles) * quantity;
     float increasingComplexityAH =
-        (matrixAMaxHeigth / totalSetOfFiles) * quantity;
+        (matrixAMaxHeight / totalSetOfFiles) * quantity;
     float increasingComplexityBW =
         (matrixBMaxWitdh / totalSetOfFiles) * quantity;
     float increasingComplexityBH =
-        (matrixBMaxHeigth / totalSetOfFiles) * quantity;
+        (matrixBMaxHeight / totalSetOfFiles) * quantity;
 
     for (int i = 0; i < increasingComplexityAW; i++) {
       for (int j = 0; j < increasingComplexityAH; j++) {
@@ -59,6 +59,20 @@ void MatrixUtilities::generateMatrixFilesForProductAlgorithms(
       outputFileB.close();
     } else {
       std::cout << "Error while creating the matrix input files" << std::endl;
+    }
+  }
+}
+
+void MatrixUtilities::writeMatrixToOutputFile(
+    std::vector<std::vector<int>> array, const std::string &filename,
+    const std::string &directory) {
+  std::ofstream outFile(directory + "/" + filename);
+  if (outFile.is_open()) {
+    for (int i = 0; i < array.size(); i++) {
+      for (int j = 0; j < array[0].size(); j++) {
+        outFile << array[i][j] << " ";
+      }
+      outFile.close();
     }
   }
 }
