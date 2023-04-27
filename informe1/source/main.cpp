@@ -211,67 +211,38 @@ void performMatrixExperiment(MatrixExperiments experiment,
   }
 }
 
-int main(int argc, char *argv[]) {
-  std::ofstream sortingOutputFile(SORTING_EXPERIMENT_OUTPUT);
-  sortingOutputFile << "Experiment,Dataset,Entries,Time(us)" << std::endl;
-  std::ofstream matrixOutputFile(MATRIX_EXPERIMENT_OUTPUT);
-  matrixOutputFile << "Experiment,Dataset,m,Time(us)" << std::endl;
-  if (argc > 1) {
-    unsigned int amountOfRandomNumbers = atoi(argv[1]);
-    unsigned int distributionMax = atoi(argv[2]);
-    unsigned int totalAmountOfFiles = atoi(argv[3]);
-    unsigned int matrixAMaxWidth = atoi(argv[4]);
-    unsigned int matrixAMaxHeight = atoi(argv[5]);
-    unsigned int matrixBMaxWidth = atoi(argv[6]);
-    unsigned int matrixBMaxHeight = atoi(argv[7]);
-    unsigned int matrixTotalSetOfFiles = atoi(argv[8]);
-    unsigned int matrixDistributionMax = atoi(argv[9]);
-
-    /* TODO: refactor comments
-     * generates input files from arguments
-     * increasing complexity depends on input from command line:
-     * amountOfRandomNumbers, distributionMax
-     * TODO: add functionality for different characteristics (semi-sorted,
-     * partially-sorted)
-     */
-    sUtils.generateInputFilesForSortingAlgorithm(
-        amountOfRandomNumbers, distributionMax, totalAmountOfFiles);
-
-    mUtils.generateMatrixFilesForProductAlgorithms(
-        matrixAMaxWidth, matrixAMaxHeight, matrixBMaxWidth, matrixBMaxHeight,
-        matrixTotalSetOfFiles, matrixDistributionMax);
-  }
-
-  /**
-   * Iterates over directory for the input files and then populates the array
-   */
-  std::filesystem::path input_dir_path_sorting =
-      std::filesystem::current_path() / "input_files/sorting";
-
-  std::filesystem::path input_dir_path_matrix =
-      std::filesystem::current_path() / "input_files/matrix";
-
-  int filecounterSorting = 1;
-  const auto totalFilesSorting = std::distance(
-      std::filesystem::recursive_directory_iterator(input_dir_path_sorting),
-      std::filesystem::recursive_directory_iterator{});
-
-  int filecounterMatrix = 1;
-  const auto totalFilesMatrix = std::distance(
-      std::filesystem::recursive_directory_iterator(input_dir_path_matrix),
-      std::filesystem::recursive_directory_iterator{});
-
-  for (int i = 1; i <= totalFilesSorting; i++) {
-    std::string filename = "input_" + std::to_string(i) + ".txt";
-    for (const auto &inputFile :
-         std::filesystem::directory_iterator(input_dir_path_sorting)) {
+void populateArrayAndExecuteExperiments(std::filesystem::path dir,
+                                        int &counter,
+                                        long totalFiles,
+                                        TypeOfInputForSortingFiles type,
+                                        std::ofstream &sortingOutputFile) {
+  for (int i = 1; i <= totalFiles; i++) {
+    std::string filename;
+    switch (type) {
+    case randomized: {
+      filename = "input_randomized_" + std::to_string(i) + ".txt";
+      break;
+    }
+    case partial: {
+      filename = "input_partial_" + std::to_string(i) + ".txt";
+      break;
+    }
+    case semi: {
+      filename = "input_semi_" + std::to_string(i) + ".txt";
+      break;
+    }
+    case backsorted: {
+      filename = "input_backsorted_" + std::to_string(i) + ".txt";
+      break;
+    }
+    default: {
+      filename = "input_randomized_" + std::to_string(i) + ".txt";
+      break;
+    }
+    }
+    for (const auto &inputFile : std::filesystem::directory_iterator(dir)) {
       if ((inputFile.path().filename() == filename) &&
           inputFile.is_regular_file()) {
-
-        int percentage = (filecounterSorting * 100) / totalFilesSorting;
-        std::cout << "\r"
-                  << "Sorting Working: " + std::to_string(percentage) + "%"
-                  << std::flush;
 
         std::ifstream file(inputFile.path());
         if (file.is_open()) {
@@ -301,8 +272,124 @@ int main(int argc, char *argv[]) {
         }
       }
     }
-    filecounterSorting++;
+    counter++;
   }
+}
+
+int main(int argc, char *argv[]) {
+  std::ofstream sortingOutputFile(SORTING_EXPERIMENT_OUTPUT);
+  sortingOutputFile << "Experiment,Dataset,Entries,Time(us)" << std::endl;
+  std::ofstream matrixOutputFile(MATRIX_EXPERIMENT_OUTPUT);
+  matrixOutputFile << "Experiment,Dataset,m,Time(us)" << std::endl;
+  if (argc > 1) {
+    unsigned int amountOfRandomNumbers = atoi(argv[1]);
+    unsigned int distributionMax = atoi(argv[2]);
+    unsigned int totalAmountOfFiles = atoi(argv[3]);
+    unsigned int matrixAMaxWidth = atoi(argv[4]);
+    unsigned int matrixAMaxHeight = atoi(argv[5]);
+    unsigned int matrixBMaxWidth = atoi(argv[6]);
+    unsigned int matrixBMaxHeight = atoi(argv[7]);
+    unsigned int matrixTotalSetOfFiles = atoi(argv[8]);
+    unsigned int matrixDistributionMax = atoi(argv[9]);
+
+    /*
+     * generates input files from arguments
+     * increasing complexity depends on input from command line:
+     * amountOfRandomNumbers, distributionMax
+     */
+    sUtils.generateInputFilesForSortingAlgorithm(
+        amountOfRandomNumbers, distributionMax, totalAmountOfFiles, randomized);
+
+    sUtils.generateInputFilesForSortingAlgorithm(
+        amountOfRandomNumbers, distributionMax, totalAmountOfFiles, partial);
+
+    sUtils.generateInputFilesForSortingAlgorithm(
+        amountOfRandomNumbers, distributionMax, totalAmountOfFiles, semi);
+
+    sUtils.generateInputFilesForSortingAlgorithm(
+        amountOfRandomNumbers, distributionMax, totalAmountOfFiles, backsorted);
+
+    mUtils.generateMatrixFilesForProductAlgorithms(
+        matrixAMaxWidth, matrixAMaxHeight, matrixBMaxWidth, matrixBMaxHeight,
+        matrixTotalSetOfFiles, matrixDistributionMax);
+  }
+
+  /**
+   * Iterates over directory for the input files and then populates the array
+   */
+  std::filesystem::path input_dir_path_sorting_randomized =
+      std::filesystem::current_path() / "input_files/sorting/randomized";
+
+  std::filesystem::path input_dir_path_sorting_partial =
+      std::filesystem::current_path() / "input_files/sorting/partial";
+
+  std::filesystem::path input_dir_path_sorting_semi =
+      std::filesystem::current_path() / "input_files/sorting/semi";
+
+  std::filesystem::path input_dir_path_sorting_backsorted =
+      std::filesystem::current_path() / "input_files/sorting/backsorted";
+
+  std::filesystem::path input_dir_path_matrix =
+      std::filesystem::current_path() / "input_files/matrix";
+
+  int filecounterSortingRandomized = 1;
+  const auto totalFilesSortingRandomized =
+      std::distance(std::filesystem::recursive_directory_iterator(
+                        input_dir_path_sorting_randomized),
+                    std::filesystem::recursive_directory_iterator{});
+
+  populateArrayAndExecuteExperiments(
+  input_dir_path_sorting_randomized,
+  filecounterSortingRandomized,
+  totalFilesSortingRandomized,
+  randomized,
+  sortingOutputFile);
+
+  int filecounterSortingPartial = 1;
+  const auto totalFilesSortingPartial =
+      std::distance(std::filesystem::recursive_directory_iterator(
+                        input_dir_path_sorting_partial),
+                    std::filesystem::recursive_directory_iterator{});
+
+  populateArrayAndExecuteExperiments(
+      input_dir_path_sorting_partial,
+      filecounterSortingPartial,
+      totalFilesSortingPartial,
+  partial,
+  sortingOutputFile);
+
+  int filecounterSortingSemi = 1;
+  const auto totalFilesSortingSemi =
+      std::distance(std::filesystem::recursive_directory_iterator(
+                        input_dir_path_sorting_semi),
+                    std::filesystem::recursive_directory_iterator{});
+
+  populateArrayAndExecuteExperiments(
+  input_dir_path_sorting_semi,
+  filecounterSortingSemi,
+  totalFilesSortingSemi,
+  semi,
+  sortingOutputFile);
+
+  int filecounterSortingBacksorted = 1;
+  const auto totalFilesSortingBacksorted =
+      std::distance(std::filesystem::recursive_directory_iterator(
+                        input_dir_path_sorting_backsorted),
+                    std::filesystem::recursive_directory_iterator{});
+
+  populateArrayAndExecuteExperiments(
+  input_dir_path_sorting_backsorted,
+  filecounterSortingBacksorted,
+  totalFilesSortingBacksorted,
+  backsorted,
+  sortingOutputFile);
+
+  int filecounterMatrix = 1;
+  const auto totalFilesMatrix = std::distance(
+      std::filesystem::recursive_directory_iterator(input_dir_path_matrix),
+      std::filesystem::recursive_directory_iterator{});
+
+
   for (int j = 1; j <= totalFilesMatrix; j++) {
     std::string filenameA = "matrix_input_a_" + std::to_string(j) + ".txt";
     std::string filenameB = "matrix_input_b_" + std::to_string(j) + ".txt";

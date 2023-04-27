@@ -3,22 +3,31 @@ arg="$1"
 current_directory=$(pwd)
 
 function fc_clean {
-  zip_file_sorting="input_files/sorting/sorting_input_$(date +"%Y%m%d%H%M%S").zip"
+  zip_file_sorting_randomized="input_files/sorting/randomized/sorting_input_randomized_$(date +"%Y%m%d%H%M%S").zip"
+  zip_file_sorting_partial="input_files/sorting/partial/sorting_input_partial_$(date +"%Y%m%d%H%M%S").zip"
+  zip_file_sorting_semi="input_files/sorting/semi/sorting_input_semi_$(date +"%Y%m%d%H%M%S").zip"
+  zip_file_sorting_backsorted="input_files/sorting/backsorted/sorting_input_backsorted_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_matrix="input_files/matrix/matrix_input_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_output="output_files/output_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_results="statistics/results_$(date +"%Y%m%d%H%M%S").zip"
-  txt_files_sorting=$(find input_files/sorting/ -name "*.txt")
+  txt_files_sorting_randomized=$(find input_files/sorting/randomized/ -name "*.txt")
+  txt_files_sorting_partial=$(find input_files/sorting/partial/ -name "*.txt")
+  txt_files_sorting_semi=$(find input_files/sorting/semi/ -name "*.txt")
+  txt_files_sorting_backsorted=$(find input_files/sorting/backsorted/ -name "*.txt")
   txt_files_matrix=$(find input_files/matrix/ -name "*.txt")
   txt_files_output=$(find output_files/ -name "*.txt")
   csv_files_results=$(find statistics/ -name "*.csv")
 
-  zip -q "$zip_file_sorting" $txt_files_sorting
+  zip -q "$zip_file_sorting_randomized" $txt_files_sorting_randomized
+  zip -q "$zip_file_sorting_partial" $txt_files_sorting_partial
+  zip -q "$zip_file_sorting_semi" $txt_files_sorting_semi
+  zip -q "$zip_file_sorting_backsorted" $txt_files_sorting_backsorted
   zip -q "$zip_file_matrix" $txt_files_matrix
   zip -q "$zip_file_output" $txt_files_output
   zip -q "$zip_file_results" $csv_files_results
 
   echo "Files zipped"
-  rm input_files/matrix/*.txt input_files/sorting/*.txt output_files/*.txt statistics/*.csv
+  rm input_files/matrix/*.txt input_files/sorting/*/*.txt output_files/*.txt statistics/*.csv
   echo "Experiment files cleaned"
 }
 

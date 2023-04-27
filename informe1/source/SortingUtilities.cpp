@@ -1,11 +1,11 @@
 #include "../headers/SortingUtilities.h"
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <random>
-#include <vector>
-#include <filesystem>
 #include <sstream>
-
+#include <vector>
+#include <algorithm>
 /**
  * Generates files with random numbers unsorted
  * input <unsigned int> amountOfRandomNumbers: amount of numbers to be present
@@ -15,23 +15,76 @@
  */
 void SortingUtilities::generateInputFilesForSortingAlgorithm(
     unsigned int amountOfRandomNumbers, unsigned int distributionMax,
-    unsigned int totalAmountOfFiles) {
+    unsigned int totalAmountOfFiles, TypeOfInputForSortingFiles typeOfInput) {
+  std::string fileName;
   for (int quantity = 1; quantity <= totalAmountOfFiles; quantity++) {
-
-    std::string fileName =
-        "input_files/sorting/input_" + std::to_string(quantity) + ".txt";
+    switch (typeOfInput) {
+    case randomized: {
+      fileName = "input_files/sorting/randomized/input_randomized_" +
+                 std::to_string(quantity) + ".txt";
+      break;
+    }
+    case partial: {
+      fileName = "input_files/sorting/partial/input_partial_" +
+                 std::to_string(quantity) + ".txt";
+      break;
+    }
+    case semi: {
+      fileName =
+          "input_files/sorting/semi/input_semi_" + std::to_string(quantity) + ".txt";
+      break;
+    }
+    case backsorted: {
+      fileName = "input_files/sorting/backsorted/input_backsorted_" +
+                 std::to_string(quantity) + ".txt";
+      break;
+    }
+    default: {
+      fileName = "input_files/sorting/randomized/input_randomized_" +
+                 std::to_string(quantity) + ".txt";
+      break;
+    }
+    }
     std::random_device randomDevice;
     std::mt19937 generator(randomDevice());
     std::uniform_int_distribution<> distribution(1, distributionMax);
     std::vector<int> array;
-    float increasingLength = (amountOfRandomNumbers/totalAmountOfFiles)*quantity;
+    float increasingLength =
+        (amountOfRandomNumbers / totalAmountOfFiles) * quantity;
     for (int i = 0; i < increasingLength; i++) {
       array.push_back(distribution(generator));
     }
     std::ofstream outputFile(fileName);
     if (outputFile.is_open()) {
       for (int i = 0; i < array.size(); i++) {
-        outputFile << array[i] << "\n";
+        switch (typeOfInput) {
+        case randomized: {
+          outputFile << array[i] << "\n";
+          break;
+        }
+        case partial: {
+          // Producirá un archivo ordenado hasta la mitad, y randomizado para los demás
+          std::partial_sort(array.begin(), array.begin() + (array.size()/2), array.end());
+          outputFile << array[i] << "\n";
+          break;
+        }
+        case semi: {
+          // Producirá un archivo donde solo los pares están ordenados dentro de un subconjunto randomizado
+          std::stable_partition(array.begin(), array.end(), [](int n){ return n % 2 != 0; });
+          outputFile << array[i] << "\n";
+          break;
+        }
+        case backsorted: {
+          // Producirá un archivo ordenado de Mayor a Menor
+          std::sort(array.begin(), array.end(), std::greater<int>());
+          outputFile << array[i] << "\n";
+          break;
+        }
+        default: {
+          outputFile << array[i] << "\n";
+          break;
+        }
+        }
       }
       outputFile.close();
     } else {
@@ -60,8 +113,10 @@ void SortingUtilities::parseNumbersFromFile(const std::string &filename,
   }
 }
 
-void SortingUtilities::writeVectorToOutputFile(std::vector<int> array,const std::string& filename, const std::string& directory) {
-  std::ofstream outFile(directory+"/"+filename);
+void SortingUtilities::writeVectorToOutputFile(std::vector<int> array,
+                                               const std::string &filename,
+                                               const std::string &directory) {
+  std::ofstream outFile(directory + "/" + filename);
   if (outFile.is_open()) {
     for (int val : array) {
       outFile << val << "\n";
