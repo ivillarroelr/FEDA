@@ -31,6 +31,24 @@ function fc_clean {
   echo "Experiment files cleaned"
 }
 
+function fc_delete {
+    echo "Are you sure to delete all experiment files? (yes/no)"
+    read answer
+    if [ "$answer" = "yes" ]; then
+      rm input_files/matrix/*
+      rm input_files/sorting/backsorted/*
+      rm input_files/sorting/partial/*
+      rm input_files/sorting/randomized/*
+      rm input_files/sorting/semi/*
+      rm output_files/*
+      rm statistics/*
+      echo "Files deleted"
+    else
+      echo "Operation canceled"
+    fi
+
+  }
+
 function fc_newrun {
   echo "Parameters for sorting experiments"
   echo "Enter amount of random numbers:"
@@ -127,6 +145,9 @@ case $arg in
     ;;
    help)
     fc_help
+    ;;
+   delete)
+    fc_delete
     ;;
   *)
     echo "Opción no reconocida"
