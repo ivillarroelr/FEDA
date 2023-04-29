@@ -1,20 +1,23 @@
 #!/bin/bash
 arg="$1"
 current_directory=$(pwd)
+time=$(date +"%Y%m%d%H%M%S")
 
 function fc_clean {
   zip_file_sorting_randomized="input_files/sorting/randomized/sorting_input_randomized_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_sorting_partial="input_files/sorting/partial/sorting_input_partial_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_sorting_semi="input_files/sorting/semi/sorting_input_semi_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_sorting_backsorted="input_files/sorting/backsorted/sorting_input_backsorted_$(date +"%Y%m%d%H%M%S").zip"
-  zip_file_matrix="input_files/matrix/matrix_input_$(date +"%Y%m%d%H%M%S").zip"
+  zip_file_matrix_square="input_files/matrix/square/matrix_square_input_$(date +"%Y%m%d%H%M%S").zip"
+  zip_file_matrix_rectangle="input_files/matrix/rectangle/matrix_rectangle_input_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_output="output_files/output_$(date +"%Y%m%d%H%M%S").zip"
   zip_file_results="statistics/results_$(date +"%Y%m%d%H%M%S").zip"
   txt_files_sorting_randomized=$(find input_files/sorting/randomized/ -name "*.txt")
   txt_files_sorting_partial=$(find input_files/sorting/partial/ -name "*.txt")
   txt_files_sorting_semi=$(find input_files/sorting/semi/ -name "*.txt")
   txt_files_sorting_backsorted=$(find input_files/sorting/backsorted/ -name "*.txt")
-  txt_files_matrix=$(find input_files/matrix/ -name "*.txt")
+  txt_files_matrix_square=$(find input_files/matrix/square/ -name "*.txt")
+  txt_files_matrix_rectangle=$(find input_files/matrix/rectangle/ -name "*.txt")
   txt_files_output=$(find output_files/ -name "*.txt")
   csv_files_results=$(find statistics/ -name "*.csv")
 
@@ -22,12 +25,13 @@ function fc_clean {
   zip -q "$zip_file_sorting_partial" $txt_files_sorting_partial
   zip -q "$zip_file_sorting_semi" $txt_files_sorting_semi
   zip -q "$zip_file_sorting_backsorted" $txt_files_sorting_backsorted
-  zip -q "$zip_file_matrix" $txt_files_matrix
+  zip -q "$zip_file_matrix_square" $txt_files_matrix_square
+  zip -q "$zip_file_matrix_rectangle" $txt_files_matrix_rectangle
   zip -q "$zip_file_output" $txt_files_output
   zip -q "$zip_file_results" $csv_files_results
 
   echo "Files zipped"
-  rm input_files/matrix/*.txt input_files/sorting/*/*.txt output_files/*.txt statistics/*.csv
+  rm *.out input_files/matrix/*.txt input_files/sorting/*/*.txt output_files/*.txt statistics/*.csv
   echo "Experiment files cleaned"
 }
 
@@ -42,6 +46,7 @@ function fc_delete {
       rm input_files/sorting/semi/*
       rm output_files/*
       rm statistics/*
+      rm *.out
       echo "Files deleted"
     else
       echo "Operation canceled"
@@ -53,30 +58,71 @@ function fc_newrun {
   echo "Parameters for sorting experiments"
   echo "Enter amount of random numbers:"
   read amount_of_random_numbers
+  echo "amount_of_random_numbers,$amount_of_random_numbers" >> "statistics/newrun_parameters_$time.csv"
   echo "Enter distribution max:"
   read distribution_max
+  echo "distribution_max,$distribution_max" >> "statistics/newrun_parameters_$time.csv"
   echo "Enter total amount of files:"
   read total_amount_of_files
-  echo "Parameters for matrix experiments"
+  echo "total_amount_of_files,$total_amount_of_files" >> "statistics/newrun_parameters_$time.csv"
+  echo "Parameters for SQUARE matrix experiments"
   echo "Enter matrix A max. width:"
-  read matrix_a_max_width
+  read matrix_square_a_max_width
+  echo "matrix_square_a_max_width,$matrix_square_a_max_width" >> "statistics/newrun_parameters_$time.csv"
   echo "Enter matrix A max. height:"
-  read matrix_a_max_height
+  read matrix_square_a_max_height
+  echo "matrix_square_a_max_height,$matrix_square_a_max_height" >> "statistics/newrun_parameters_$time.csv"
   echo "Enter matrix B max. width:"
-  read matrix_b_max_width
+  read matrix_square_b_max_width
+  echo "matrix_square_b_max_width,$matrix_square_b_max_width" >> "statistics/newrun_parameters_$time.csv"
   echo "Enter matrix B max. height:"
-  read matrix_b_max_height
+  read matrix_square_b_max_height
+  echo "matrix_square_b_max_height,$matrix_square_b_max_height" >> "statistics/newrun_parameters_$time.csv"
+  echo "Parameters for RECTANGLE matrix experiments"
+  echo "Enter matrix A max. width:"
+  read matrix_rectangle_a_max_width
+  echo "matrix_rectangle_a_max_width,$matrix_rectangle_a_max_width" >> "statistics/newrun_parameters_$time.csv"
+  echo "Enter matrix A max. height:"
+  read matrix_rectangle_a_max_height
+  echo "matrix_rectangle_a_max_height,$matrix_rectangle_a_max_height" >> "statistics/newrun_parameters_$time.csv"
+  echo "Enter matrix B max. width:"
+  read matrix_rectangle_b_max_width
+  echo "matrix_rectangle_b_max_width,$matrix_rectangle_b_max_width" >> "statistics/newrun_parameters_$time.csv"
+  echo "Enter matrix B max. height:"
+  read matrix_rectangle_b_max_height
+  echo "matrix_rectangle_b_max_height,$matrix_rectangle_b_max_height" >> "statistics/newrun_parameters_$time.csv"
+  echo "Shared Parameters for matrix experiments"
   echo "Enter total set of files:"
   read matrix_total_set_of_files
+  echo "matrix_total_set_of_files,$matrix_total_set_of_files" >> "statistics/newrun_parameters_$time.csv"
   echo "Enter distribution max:"
   read matrix_distribution_max
-  echo "Executing main program..."
-  ./main $amount_of_random_numbers $distribution_max $total_amount_of_files $matrix_a_max_width $matrix_a_max_height $matrix_b_max_width $matrix_b_max_height $matrix_total_set_of_files $matrix_distribution_max
+  echo "matrix_distribution_max,$matrix_distribution_max" >> "statistics/newrun_parameters_$time.csv"
+  echo "Executing bubblesort program..."
+  ./bubblesort.out $amount_of_random_numbers $distribution_max $total_amount_of_files
+  echo "Executing insertionsort program..."
+  ./insertionsort.out $amount_of_random_numbers $distribution_max $total_amount_of_files
+  echo "Executing mergesort program..."
+  ./mergesort.out $amount_of_random_numbers $distribution_max $total_amount_of_files
+  echo "Executing quicksort program..."
+  ./quicksort.out $amount_of_random_numbers $distribution_max $total_amount_of_files
+  echo "Executing stlsort program..."
+  ./stlsort.out $amount_of_random_numbers $distribution_max $total_amount_of_files
+  echo "Executing squarematrix program..."
+  ./squarematrix.out $matrix_square_a_max_width $matrix_square_a_max_height $matrix_square_b_max_width $matrix_square_b_max_height $matrix_total_set_of_files $matrix_distribution_max
+  echo "Executing rectanglematrix program..."
+  ./rectanglematrix.out $matrix_rectangle_a_max_width $matrix_rectangle_a_max_height $matrix_rectangle_b_max_width $matrix_rectangle_b_max_height $matrix_total_set_of_files $matrix_distribution_max
 }
 
 function fc_recompile {
-  rm main
-  g++ -lstdc++fs source/main.cpp source/SortingAlgorithms.cpp source/SortingUtilities.cpp source/MatrixAlgorithms.cpp source/MatrixUtilities.cpp -o main
+  rm *.out
+  g++ -lstdc++fs source/bubblesort.cpp source/SortingAlgorithms.cpp source/SortingUtilities.cpp -o bubblesort.out
+  g++ -lstdc++fs source/insertionsort.cpp source/SortingAlgorithms.cpp source/SortingUtilities.cpp -o insertionsort.out
+  g++ -lstdc++fs source/mergesort.cpp source/SortingAlgorithms.cpp source/SortingUtilities.cpp -o mergesort.out
+  g++ -lstdc++fs source/quicksort.cpp source/SortingAlgorithms.cpp source/SortingUtilities.cpp -o quicksort.out
+  g++ -lstdc++fs source/stlsort.cpp source/SortingAlgorithms.cpp source/SortingUtilities.cpp -o stlsort.out
+  g++ -lstdc++fs source/squarematrix.cpp source/MatrixAlgorithms.cpp source/MatrixUtilities.cpp -o squarematrix.out
+  g++ -lstdc++fs source/rectanglematrix.cpp source/MatrixAlgorithms.cpp source/MatrixUtilities.cpp -o rectanglematrix.out
   echo "Program recompiled"
 }
 

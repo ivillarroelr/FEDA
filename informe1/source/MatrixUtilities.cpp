@@ -8,13 +8,31 @@
 #include "../headers/MatrixUtilities.h"
 
 void MatrixUtilities::generateMatrixFilesForProductAlgorithms(
-    int matrixAMaxWitdh, int matrixAMaxHeight, int matrixBMaxWitdh,
-    int matrixBMaxHeight, int totalSetOfFiles, int distributionMax) {
+    MatrixType matrixType, int matrixAMaxWitdh, int matrixAMaxHeight,
+    int matrixBMaxWitdh, int matrixBMaxHeight, int totalSetOfFiles,
+    int distributionMax) {
   for (int quantity = 0; quantity < totalSetOfFiles; quantity++) {
-    std::string fileNameA = "input_files/matrix/matrix_input_a_" +
-                            std::to_string(quantity + 1) + ".txt";
-    std::string fileNameB = "input_files/matrix/matrix_input_b_" +
-                            std::to_string(quantity + 1) + ".txt";
+    std::string fileNameA, fileNameB;
+    switch (matrixType) {
+    case square: {
+      fileNameA = "input_files/matrix/square/matrix_square_input_a_" +
+                  std::to_string(quantity + 1) + ".txt";
+      fileNameB = "input_files/matrix/square/matrix_square_input_b_" +
+                  std::to_string(quantity + 1) + ".txt";
+    }
+    case rectangle: {
+      fileNameA = "input_files/matrix/rectangle/matrix_rectangle_input_a_" +
+                  std::to_string(quantity + 1) + ".txt";
+      fileNameB = "input_files/matrix/rectangle/matrix_rectangle_input_b_" +
+                  std::to_string(quantity + 1) + ".txt";
+    }
+    default: {
+      fileNameA = "input_files/matrix/square/matrix_square_input_a_" +
+                  std::to_string(quantity + 1) + ".txt";
+      fileNameB = "input_files/matrix/square/matrix_square_input_b_" +
+                  std::to_string(quantity + 1) + ".txt";
+    }
+    }
     int A[matrixAMaxWitdh][matrixAMaxHeight];
     int B[matrixBMaxWitdh][matrixBMaxHeight];
     std::random_device randomDevice;
