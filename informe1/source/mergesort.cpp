@@ -103,7 +103,7 @@ void populateArrayAndExecuteExperiments(std::vector<int> &array,
 }
 
 int main(int argc, char *argv[]) {
-  std::ofstream sortingOutputFile(SORTING_EXPERIMENT_OUTPUT);
+  std::ofstream sortingOutputFile(SORTING_EXPERIMENT_OUTPUT, std::ios::app);
   sortingOutputFile << "Experiment,Dataset,Entries,Time(us)" << std::endl;
   if (argc > 1) {
     unsigned int amountOfRandomNumbers = atoi(argv[1]);

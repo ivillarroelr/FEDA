@@ -38,6 +38,7 @@ void populateArrayAndExecuteExperiments(std::vector<int> &array,
     std::cout << "\r"
               << "Bubblesort Working: " + std::to_string(percentage) + "%"
               << std::flush;
+    std::string filename;
     switch (type) {
     case randomized: {
       filename = "input_randomized_" + std::to_string(i) + ".txt";
@@ -66,7 +67,6 @@ void populateArrayAndExecuteExperiments(std::vector<int> &array,
 
         std::ifstream file(inputFile.path());
         if (file.is_open()) {
-          std::cout << filename << std::endl;
           std::string line;
           while (std::getline(file, line)) {
             int number = std::stoi(line);
