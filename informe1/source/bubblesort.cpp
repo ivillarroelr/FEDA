@@ -38,7 +38,6 @@ void populateArrayAndExecuteExperiments(std::vector<int> &array,
     std::cout << "\r"
               << "Bubblesort Working: " + std::to_string(percentage) + "%"
               << std::flush;
-    std::string filename;
     switch (type) {
     case randomized: {
       filename = "input_randomized_" + std::to_string(i) + ".txt";
