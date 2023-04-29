@@ -68,15 +68,12 @@ function fc_newrun {
   echo "Parameters for SQUARE matrix experiments"
   echo "Enter matrix A max. width:"
   read matrix_square_a_max_width
+  matrix_square_a_max_height = matrix_square_a_max_width
+  matrix_square_b_max_width = matrix_square_a_max_width
+  matrix_square_b_max_height = matrix_square_a_max_width
   echo "matrix_square_a_max_width,$matrix_square_a_max_width" >> "statistics/newrun_parameters_$time.csv"
-  echo "Enter matrix A max. height:"
-  read matrix_square_a_max_height
   echo "matrix_square_a_max_height,$matrix_square_a_max_height" >> "statistics/newrun_parameters_$time.csv"
-  echo "Enter matrix B max. width:"
-  read matrix_square_b_max_width
   echo "matrix_square_b_max_width,$matrix_square_b_max_width" >> "statistics/newrun_parameters_$time.csv"
-  echo "Enter matrix B max. height:"
-  read matrix_square_b_max_height
   echo "matrix_square_b_max_height,$matrix_square_b_max_height" >> "statistics/newrun_parameters_$time.csv"
   echo "Parameters for RECTANGLE matrix experiments"
   echo "Enter matrix A max. width:"
