@@ -84,7 +84,7 @@ void performMatrixExperiment(MatrixExperiments experiment,
 }
 
 int main(int argc, char *argv[]) {
-  std::ofstream matrixOutputFile(MATRIX_EXPERIMENT_OUTPUT);
+  std::ofstream matrixOutputFile(MATRIX_EXPERIMENT_OUTPUT, std::ios::app);
   matrixOutputFile << "Experiment,Dataset,m,Time(us)" << std::endl;
   if (argc > 1) {
     unsigned int matrixAMaxWidth = atoi(argv[1]);
