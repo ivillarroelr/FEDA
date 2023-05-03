@@ -31,7 +31,7 @@ function fc_clean {
   zip -q "$zip_file_results" $csv_files_results
 
   echo "Files zipped"
-  rm *.out input_files/matrix/*.txt input_files/sorting/*/*.txt output_files/*.txt statistics/*.csv
+  rm *.out input_files/matrix/*/*.txt input_files/sorting/*/*.txt output_files/*.txt statistics/*.csv
   echo "Experiment files cleaned"
 }
 
@@ -145,6 +145,10 @@ function fc_sortingdisplay {
   python3 graph/graphSorting.py
 }
 
+function fc_bigOdisplay {
+  python3 graph/graphBigO.py
+}
+
 function fc_help {
   echo -e "\033[1mAvailable options\033[0m"
   echo ""
@@ -183,8 +187,12 @@ case $arg in
     fc_matrixdisplay
     ;;
    sortingdisplay)
-    echo "Displaying matrix results"
+    echo "Displaying sorting results"
     fc_sortingdisplay
+    ;;
+    bigodisplay)
+    echo "Displaying common BigO values"
+    fc_bigOdisplay
     ;;
    help)
     fc_help

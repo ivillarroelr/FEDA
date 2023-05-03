@@ -16,7 +16,7 @@ MatrixUtilities mUtils;
 
 enum MatrixExperiments { matrixproduct, matrixproductoptimized, strassen };
 
-const std::string MATRIX_EXPERIMENT_OUTPUT = "statistics/matrix_results.csv";
+const std::string MATRIX_EXPERIMENT_OUTPUT = "statistics/matrix_rectangle_results.csv";
 
 void performMatrixExperiment(MatrixExperiments experiment,
                              std::ofstream &outputFile, int set, int m,
@@ -108,7 +108,7 @@ int main(int argc, char *argv[]) {
    * Iterates over directory for the input files and then populates the array
    */
   std::filesystem::path input_dir_path_matrix =
-      std::filesystem::current_path() / "input_files/matrix/rectangle";
+      std::filesystem::current_path() / "input_files/matrix/rectangle/";
 
   int filecounterMatrix = 1;
   const auto totalFilesMatrix = std::distance(

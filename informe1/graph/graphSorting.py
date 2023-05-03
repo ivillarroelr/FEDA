@@ -48,5 +48,5 @@ def plot_results(csv_file):
     plt.tight_layout()
     plt.show()
 
-plot_results('statistics/sorting_results.csv')
+plot_results('../statistics/sorting_results.csv')
 

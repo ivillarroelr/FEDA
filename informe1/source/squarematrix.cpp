@@ -16,7 +16,7 @@ MatrixUtilities mUtils;
 
 enum MatrixExperiments { matrixproduct, matrixproductoptimized, strassen };
 
-const std::string MATRIX_EXPERIMENT_OUTPUT = "statistics/matrix_results.csv";
+const std::string MATRIX_EXPERIMENT_OUTPUT = "statistics/matrix_square_results.csv";
 
 void performMatrixExperiment(MatrixExperiments experiment,
                              std::ofstream &outputFile, int set, int m,

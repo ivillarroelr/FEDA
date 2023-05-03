@@ -5,7 +5,7 @@ import locale
 # This script plots the results of matrix product experiments
 # as a function of the size of the matrices being multiplied.
 
-def plot_results(csv_file):
+def plot_results(csv_file, title, ax):
     with open(csv_file) as f:
         reader = csv.DictReader(f)
         data = [(row['Experiment'], int(row['Dataset']), int(row['m']), int(row['Time(us)'])) for row in reader]
@@ -16,8 +16,6 @@ def plot_results(csv_file):
     # Get a list of unique experiments
     experiments = list(set([d[0] for d in data]))
 
-    fig, ax = plt.subplots()
-
     # Plot each experiment as a separate line
     for experiment in experiments:
         experiment_data = [(d[2], d[3]) for d in data if d[0] == experiment]
@@ -25,7 +23,7 @@ def plot_results(csv_file):
         values = [d[1] for d in experiment_data]
         ax.plot(labels, values, '-', linewidth=2, markersize=8, label=experiment)
 
-    ax.set_title('Matrix Product Results', fontsize=20)
+    ax.set_title(title, fontsize=20)
     ax.set_xlabel('m (thousands)', fontsize=16)
     ax.set_ylabel('Time (microseconds)', fontsize=16)
     ax.grid(True)
@@ -33,6 +31,15 @@ def plot_results(csv_file):
     ax.spines['top'].set_visible(False)
     ax.legend(fontsize=14)
 
-    plt.show()
+    return ax
 
-plot_results('statistics/matrix_results.csv')
+# Create a figure with 2 subplots side by side
+fig, (ax1, ax2) = plt.subplots(ncols=2, figsize=(16, 6))
+
+# Plot the square graph
+plot_results('statistics/matrix_square_results.csv', 'Matrix Square Results', ax1)
+
+# Plot the rectangle graph
+plot_results('statistics/matrix_rectangle_results.csv', 'Matrix Rectangle Results', ax2)
+
+plt.show()

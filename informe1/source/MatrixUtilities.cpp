@@ -19,18 +19,21 @@ void MatrixUtilities::generateMatrixFilesForProductAlgorithms(
                   std::to_string(quantity + 1) + ".txt";
       fileNameB = "input_files/matrix/square/matrix_square_input_b_" +
                   std::to_string(quantity + 1) + ".txt";
+      break;
     }
     case rectangle: {
       fileNameA = "input_files/matrix/rectangle/matrix_rectangle_input_a_" +
                   std::to_string(quantity + 1) + ".txt";
       fileNameB = "input_files/matrix/rectangle/matrix_rectangle_input_b_" +
                   std::to_string(quantity + 1) + ".txt";
+      break;
     }
     default: {
       fileNameA = "input_files/matrix/square/matrix_square_input_a_" +
                   std::to_string(quantity + 1) + ".txt";
       fileNameB = "input_files/matrix/square/matrix_square_input_b_" +
                   std::to_string(quantity + 1) + ".txt";
+      break;
     }
     }
     int A[matrixAMaxWitdh][matrixAMaxHeight];
