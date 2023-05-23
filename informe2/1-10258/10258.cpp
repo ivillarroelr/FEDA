@@ -13,6 +13,18 @@ para el ejercicio 10258 en Online Judge (https://onlinejudge.org)
 Se refactorizó el código, ordenándolo, extrayendo
 lógica hacia métodos para mejorar comprensión y orden
 y se comentó exhaustivamente.
+
+Analisis asintótico:
+En análisis está dominado por dos partes, como se procesan los datos de entrada
+y como se ordenan los equipos.
+El peor caso para el procesamiento de los datos de entrada es cuando cada equipo (100 total)
+hace un envío por problema, requiriendo cada envío una revisión de los envíos anteriores,
+eso hace que la complejidad de tiempo sea de O(n^2).
+El peor caso para el ordenar de equipos está basado en la función sort de la librería algorithm,
+que utiliza quicksort, el cual tiene una complejidad temporal promedio de O(n log n) y de O(n^2)
+en el peor de los casos, pero como el numero de equipos es fijo, en realidad es O(n).
+Por lo tanto el peor caso predominaa con O(n^2) y O(n) para la complejidad espacial, ya que todos
+los envíos se almacenan en memoria.
  */
 
 // Estructura que para el envío de un problema
