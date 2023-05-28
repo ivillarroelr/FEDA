@@ -18,8 +18,8 @@ Temporal: El peor de los casos es O(n) al tener la parte más pesada del anális
 la función verificaSecuencia() la cual contiene un ciclo for que se
 ejecuta 'n' veces, donde 'n' es el número de vagones en el tren.
 
-Espacial: Se utiliza una matriz de tamaño 1010 y una pila.
-En el peor de los casos, todos los 'n' elementos se agregan a la pila. 
+Espacial: Se utiliza una matriz de tamaño 1010 y una pila. En el peor de los casos,
+todos los 'n' elementos se agregan a la pila por lo tanto es O(n).
 */
 
 // Limpia la pila que se pasa por referencia.
